@@ -9,37 +9,31 @@ import store.domain.Product;
 import store.domain.dto.ProductDto;
 
 public class ProductService {
-    private static final int nameIndex = 0;
-    private static final int priceIndex = 1;
-    private static final int quantityIndex = 2;
-    private static final int promotionIndex = 3;
 
     public List<ProductDto> extractProductByFile(Scanner productsFile) {
-        List<ProductDto> inventory = convertFileToProduct(productsFile);
+        List<Product> inventory = convertFileToProduct(productsFile);
+
+        return convertProducts(inventory);
+    }
+
+    private List<Product> convertFileToProduct(Scanner productsFile) {
+        List<Product> inventory = productsFile.tokens()
+                // 첫 번째 header row 필터
+                .filter(line -> !Objects.equals(line, StringConstants.PRODUCTS_FILE_HEADER))
+                .map(line -> new Product(line.split(StringConstants.COMMA)))
+                .collect(Collectors.toList());
         productsFile.close();
 
         return inventory;
     }
 
-    private List<ProductDto> convertFileToProduct(Scanner productsFile) {
-        return productsFile.tokens()
-                .filter(line -> !Objects.equals(line, StringConstants.PRODUCTS_FILE_HEADER))
-                .map(line -> createProduct(line.split(StringConstants.COMMA)))
-                .collect(Collectors.toList());
-    }
-
-    private ProductDto createProduct(String[] productsInfo) {
-        String name = productsInfo[nameIndex];
-        Long price = Long.parseLong(productsInfo[priceIndex]);
-        Long quantity = Long.parseLong(productsInfo[quantityIndex]);
-        String promotion = productsInfo[promotionIndex];
-        Product product = new Product(name, price, quantity, promotion);
-
-        return new ProductDto(
-                product.getName(),
-                product.getPrice(),
-                product.getQuantity(),
-                product.getPromotion()
-        );
+    private List<ProductDto> convertProducts(List<Product> products) {
+        return products.stream().map(product -> new ProductDto(
+                        product.getName(),
+                        product.getPrice(),
+                        product.getQuantity(),
+                        product.getPromotion()
+                )
+        ).collect(Collectors.toList());
     }
 }
