@@ -1,7 +1,9 @@
 package store.view;
 
 import camp.nextstep.edu.missionutils.Console;
+import java.util.List;
 import store.common.constants.MessageConstants;
+import store.domain.dto.ProductDto;
 
 public class InputView {
 
@@ -9,10 +11,17 @@ public class InputView {
         System.out.println(MessageConstants.WELCOME_MESSAGE);
     }
 
-    public static void printInventoryDetail() {
+    public static void printInventoryDetail(List<ProductDto> inventory) {
         System.out.println(MessageConstants.INVENTORY_STATUS_MESSAGE);
-        //TODO: 재고 내역 받아와서 내려주기
-        //System.out.println(inventoryDetail);
+        for (ProductDto product: inventory) {
+            String convertedProductInfo = InputParser.inventoryParser(
+                    product.name(),
+                    product.price(),
+                    product.quantity(),
+                    product.promotion()
+            );
+            System.out.println(convertedProductInfo);
+        }
     }
 
     public static void askPurchaseProduct() {
