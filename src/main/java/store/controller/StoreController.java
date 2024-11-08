@@ -16,6 +16,7 @@ public class StoreController {
     }
 
     public void open() {
+        OutputView.printWelcome();
         Scanner productsFile = FileReader.readFile(AddressConstant.productFilePath);
         List<ProductDto> inventory = new ArrayList<>();
         ProductService productService = new ProductService();
