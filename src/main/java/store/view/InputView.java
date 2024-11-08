@@ -1,15 +1,21 @@
 package store.view;
 
 import camp.nextstep.edu.missionutils.Console;
-import java.util.List;
 import store.common.constants.MessageConstants;
-import store.domain.dto.ProductDto;
+import store.common.validation.InputValidation;
 
 public class InputView {
 
-    public static void askPurchaseProduct() {
+    public static String[] askPurchaseProduct() {
         System.out.println(MessageConstants.PRODUCT_PURCHASE_MESSAGE);
-        Console.readLine();
+        while (true) {
+            try {
+                String input = Console.readLine();
+                return InputValidation.validatePurchaseInput(input);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public void tellPromotionNotApplicable() {
