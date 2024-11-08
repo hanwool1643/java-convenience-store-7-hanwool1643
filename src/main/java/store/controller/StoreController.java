@@ -6,7 +6,7 @@ import java.util.Scanner;
 import store.common.FileReader;
 import store.common.constants.AddressConstants;
 import store.domain.Product;
-import store.domain.dto.PromotionDto;
+import store.domain.Promotion;
 import store.service.ProductService;
 import store.service.PromotionService;
 import store.view.InputView;
@@ -31,16 +31,6 @@ public class StoreController {
         //프로모션
         Scanner promotionFile = FileReader.readFile(AddressConstants.promotionFilePath);
         PromotionService promotionService = new PromotionService();
-        List<PromotionDto> promotions = promotionService.extractPromotionByFile(promotionFile);
-
-//        while (bonus == null) {
-//            try {
-//                int bonusNumberInput = InputView.getBonusNumber();
-//                bonus = drawService.getBonus(bonusNumberInput, lottoNumbers);
-//            } catch (IllegalArgumentException e) {
-//                System.out.println(e.getMessage());
-//            }
-//        }
-
+        List<Promotion> promotions = promotionService.extractPromotionByFile(promotionFile);
     }
 }
