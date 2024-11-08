@@ -8,7 +8,7 @@ import store.common.constants.AddressConstant;
 import store.common.constants.StringConstants;
 import store.domain.dto.ProductDto;
 import store.service.ProductService;
-import store.view.InputView;
+import store.view.OutputView;
 
 public class StoreController {
 
@@ -35,6 +35,6 @@ public class StoreController {
             scannerLine++;
         }
         productsFile.close();
-        InputView.printInventoryDetail(inventory);
+        OutputView.printInventoryDetail(inventory);
     }
 }
