@@ -1,15 +1,16 @@
 package store.domain;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Promotion {
     private final String name;
     private final Long buy;
     private final Long get;
-    private final Date startDate;
-    private final Date endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
-    public Promotion(String name, Long buy, Long get, Date startDate, Date endDate) {
+    public Promotion(String name, Long buy, Long get, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.buy = buy;
         this.get = get;
