@@ -12,4 +12,6 @@ public class StringConstants {
     public static final String PRODUCTS_FILE_HEADER = "name,price,quantity,promotion";
     public static final String PROMOTIONS_FILE_HEADER = "name,buy,get,start_date,end_date";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String NO = "N";
+    public static final String YES = "Y";
 }
