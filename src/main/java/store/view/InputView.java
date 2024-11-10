@@ -52,7 +52,7 @@ public class InputView {
 
     public static String askMembershipDiscount() {
         System.out.println(MessageConstants.MEMBERSHIP_DISCOUNT_MESSAGE);
-        return Console.readLine();
+        return getYesOrNoAnswer();
     }
 
     public static String buyAnotherProduct() {
