@@ -29,6 +29,17 @@ public class InputParser {
         return purchaseDetail;
     }
 
+    public static StringBuilder giveCommaToPrice(String[] splitPrice) {
+        StringBuilder priceWithComma = new StringBuilder();
+        for (int i = splitPrice.length - 1 ; i >= 0; i--) {
+            priceWithComma.insert(0, splitPrice[i]);
+            if ((splitPrice.length - i) % 3 == 0 && i != 0) {
+                priceWithComma.insert(0, StringConstants.COMMA);
+            }
+        }
+        return priceWithComma;
+    }
+
     private static String giveBlankToEnd(String name) {
         return name + StringConstants.BLANK;
     }
@@ -52,20 +63,9 @@ public class InputParser {
     private static String parsePrice(Long price) {
         if (price >= 1000) {
             String[] splitPrice = price.toString().split("");
-            return giveCommaToPrice(splitPrice).toString();
+            return giveCommaToPrice(splitPrice).append(StringConstants.WON).toString();
         }
-        return price+ StringConstants.WON;
-    }
-
-    private static StringBuilder giveCommaToPrice(String[] splitPrice) {
-        StringBuilder priceWithCurrency = new StringBuilder();
-        for (int i = 0; i < splitPrice.length; i++) {
-            if (i % 3 == 1) {
-                priceWithCurrency.append(StringConstants.COMMA);
-            }
-            priceWithCurrency.append(splitPrice[i]);
-        }
-        return priceWithCurrency.append(StringConstants.WON);
+        return price + StringConstants.WON;
     }
 
     private static StringBuilder appendAll(StringBuilder stringbuilder, String... strings) {
