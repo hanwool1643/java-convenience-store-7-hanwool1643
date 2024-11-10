@@ -20,7 +20,7 @@ public class ProductService {
         Product promotionProduct = separatedProducts[1];
 
         if (promotionProduct != null) {
-            Promotion promotion = getApplicablePromotion(promotionProduct, promotions);
+            Promotion promotion = findApplicablePromotion(promotionProduct, promotions);
             boolean isPromotionPeriod = promotion.calculateOnPromotion(DateTimes.now().toLocalDate());
 
             if (isPromotionPeriod) {
@@ -60,8 +60,8 @@ public class ProductService {
         return new Product[]{nonPromotionProduct, promotionProduct};
     }
 
-    // 프로모션이 적용된 제품의 Promotion 인스턴스 반환
-    private Promotion getApplicablePromotion(Product promotionProduct, List<Promotion> promotions) {
+    // 프로모션이 적용된 제품의 Promotion 반환
+    private Promotion findApplicablePromotion(Product promotionProduct, List<Promotion> promotions) {
         return promotions.stream()
                 .filter(promo -> promo.getName().equals(promotionProduct.getPromotion()))
                 .findFirst()
@@ -89,7 +89,7 @@ public class ProductService {
         return (quantity / promotion.getBuy()) * promotion.getGet();
     }
 
-    // 프로모션이 전체 수량에 적용되는 경우 구매 처리
+    // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 클 때
     private Receipt applyFullPromotion(Product promotionProduct, Long quantity, Long freeQuantity,
                                        Promotion promotion) {
         if (quantity % promotion.getBuy() == 0) {
@@ -118,7 +118,7 @@ public class ProductService {
         return null;
     }
 
-    // 프로모션 재고가 부족한 경우의 처리
+    // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 작을 때
     private Receipt handleInsufficientPromotionStock(Product promotionProduct, Product nonPromotionProduct, Long promotionProductQuantity,
                                                      Promotion promotion, Long quantity, Long freeQuantity) {
         Long promotionNotAppliedQuantity = promotionProductQuantity % (promotion.getBuy() + promotion.getGet());
