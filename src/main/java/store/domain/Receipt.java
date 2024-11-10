@@ -2,9 +2,9 @@ package store.domain;
 
 public class Receipt {
     private final String productName;
-    private Long totalQuantity;
-    private Long discountQuantity;
-    private Long price;
+    private final Long totalQuantity;
+    private final Long discountQuantity;
+    private final Long price;
 
     public Receipt(String productName, Long totalQuantity, Long discountQuantity, Long price) {
         this.productName = productName;
