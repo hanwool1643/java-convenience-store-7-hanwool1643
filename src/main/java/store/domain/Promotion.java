@@ -43,14 +43,6 @@ public class Promotion {
         return get;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
     public boolean calculateOnPromotion(LocalDate now) {
         return (now.isEqual(startDate) || now.isAfter(startDate)) &&
                 (now.isEqual(endDate) || now.isBefore(endDate));
