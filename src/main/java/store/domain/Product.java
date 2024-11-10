@@ -5,6 +5,8 @@ import static store.common.constants.NumberConstants.PRODUCT_PRICE_INDEX;
 import static store.common.constants.NumberConstants.PRODUCT_PROMOTION_INDEX;
 import static store.common.constants.NumberConstants.PRODUCT_QUANTITY_INDEX;
 
+import store.common.constants.ErrorConstants;
+
 public class Product {
     private final String name;
     private final Long price;
@@ -21,6 +23,13 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.promotion = promotion;
+    }
+
+    public void buy(Long quantity) {
+        if (quantity > this.quantity) {
+            throw new IllegalArgumentException(ErrorConstants.INVENTORY_SHORT_ERROR_MESSAGE);
+        }
+        this.quantity -= quantity;
     }
 
     public Long getPrice() {
