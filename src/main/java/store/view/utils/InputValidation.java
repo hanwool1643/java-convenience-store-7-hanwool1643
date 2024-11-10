@@ -1,4 +1,4 @@
-package store.common.validation;
+package store.view.utils;
 
 import java.util.Arrays;
 import store.common.constants.ErrorConstants;

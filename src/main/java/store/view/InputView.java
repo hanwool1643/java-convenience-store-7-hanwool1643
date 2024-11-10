@@ -5,7 +5,8 @@ import java.util.Map;
 import store.common.constants.ErrorConstants;
 import store.common.constants.MessageConstants;
 import store.common.constants.StringConstants;
-import store.common.validation.InputValidation;
+import store.view.utils.InputParser;
+import store.view.utils.InputValidation;
 
 public class InputView {
 

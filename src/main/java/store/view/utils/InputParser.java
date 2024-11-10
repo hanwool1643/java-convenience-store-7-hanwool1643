@@ -1,4 +1,4 @@
-package store.view;
+package store.view.utils;
 
 import java.util.Arrays;
 import java.util.HashMap;

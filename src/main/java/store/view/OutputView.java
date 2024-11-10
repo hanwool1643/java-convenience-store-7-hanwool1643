@@ -4,6 +4,7 @@ import java.util.List;
 import store.common.constants.MessageConstants;
 import store.domain.Product;
 import store.domain.Receipt;
+import store.view.utils.InputParser;
 
 public class OutputView {
     public static void printWelcome() {
