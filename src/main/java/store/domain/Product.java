@@ -40,10 +40,6 @@ public class Product {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
-
     public String getPromotion() {
         return promotion;
     }
