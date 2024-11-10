@@ -15,6 +15,7 @@ public class InputView {
             try {
                 String input = Console.readLine();
                 String[] inputSplit = InputValidation.validatePurchaseInput(input);
+                System.out.println();
                 return InputParser.purchaseInputParser(inputSplit);
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
@@ -32,6 +33,7 @@ public class InputView {
         while(true) {
             try {
                 String answer = Console.readLine();
+                System.out.println();
                 if (!(answer.equals(StringConstants.NO) || answer.equals(StringConstants.YES))) {
                     throw new IllegalArgumentException(ErrorConstants.INPUT_FORMAT_ERROR_MESSAGE);
                 }
