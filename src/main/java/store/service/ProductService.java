@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import store.common.constants.ErrorConstants;
+import store.common.constants.NumberConstants;
 import store.common.constants.StringConstants;
 import store.domain.Product;
 import store.domain.Promotion;
@@ -29,6 +30,28 @@ public class ProductService {
         }
 
         return handleNonPromotionPurchase(nonPromotionProduct, quantity);
+    }
+
+    public Long [] calculateTotalReceipts(List<Receipt> receipts) {
+        Long totalPrice = 0L;
+        Long discountPrice = 0L;
+
+        for (Receipt receipt : receipts) {
+            totalPrice += receipt.getTotalPrice();
+            discountPrice += receipt.getDiscountPrice();
+        }
+        return new Long[] {totalPrice, discountPrice};
+    }
+
+    public Long applyMembershipOrNot(Long price, String answer) {
+        if (StringConstants.YES.equals(answer)) {
+            double membershipDiscountPrice = price * NumberConstants.MEMBERSHIP_DISCOUNT_RATIO;
+            if (membershipDiscountPrice > NumberConstants.MAX_MEMBERSHIP_DISCOUNT) {
+                return NumberConstants.MAX_MEMBERSHIP_DISCOUNT;
+            }
+            return (long) membershipDiscountPrice;
+        }
+        return NumberConstants.NO_MEMBERSHIP_DISCOUNT;
     }
 
     // 제품 이름으로 Product 리스트를 검색
