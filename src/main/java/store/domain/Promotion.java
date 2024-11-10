@@ -50,4 +50,10 @@ public class Promotion {
     public LocalDate getEndDate() {
         return endDate;
     }
+
+    public boolean calculateOnPromotion(LocalDate now) {
+        return (now.isEqual(startDate) || now.isAfter(startDate)) &&
+                (now.isEqual(endDate) || now.isBefore(endDate));
+
+    }
 }
