@@ -11,7 +11,7 @@ import store.domain.Product;
 import store.domain.Promotion;
 import store.domain.Receipt;
 import store.service.FileService;
-import store.service.ProductService;
+import store.service.StoreService;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -22,7 +22,7 @@ public class StoreController {
 
     public void open() {
         FileService fileService = new FileService();
-        ProductService productService = new ProductService();
+        StoreService storeService = new StoreService();
         // 제품 추출
         Scanner productsFile = FileReader.readFile(AddressConstants.productFilePath);
         List<Product> inventory = fileService.extractProductByFile(productsFile);
@@ -31,14 +31,14 @@ public class StoreController {
         Scanner promotionFile = FileReader.readFile(AddressConstants.promotionFilePath);
         List<Promotion> promotions = fileService.extractPromotionByFile(promotionFile);
 
-        String answerToContinue = proceedToBuy(inventory, productService, promotions);
+        String answerToContinue = proceedToBuy(inventory, storeService, promotions);
 
         while (answerToContinue.equals(StringConstants.YES)) {
-            answerToContinue = proceedToBuy(inventory, productService, promotions);
+            answerToContinue = proceedToBuy(inventory, storeService, promotions);
         }
     }
 
-    private static String proceedToBuy(List<Product> inventory, ProductService productService,
+    private static String proceedToBuy(List<Product> inventory, StoreService storeService,
                                     List<Promotion> promotions) {
         // 환영 인사
         OutputView.printWelcome();
@@ -46,17 +46,17 @@ public class StoreController {
         OutputView.printInventoryDetail(inventory);
 
         // 구매
-        List<Receipt> receipts = getReceipts(productService, inventory, promotions);
+        List<Receipt> receipts = getReceipts(storeService, inventory, promotions);
 
         // 총 영수증 계산
-        Long[] totalReceipts = productService.calculateTotalReceipts(receipts);
+        Long[] totalReceipts = storeService.calculateTotalReceipts(receipts);
         Long totalPrice = totalReceipts[0];
         Long promotionDiscount = totalReceipts[1];
         Long priceAfterPromotionDiscount = totalPrice - promotionDiscount;
 
         // 멤버십 할인 적용
         String answerToApplyMembership = InputView.askMembershipDiscount();
-        Long membershipDiscount = productService.applyMembershipOrNot(priceAfterPromotionDiscount, answerToApplyMembership);
+        Long membershipDiscount = storeService.applyMembershipOrNot(priceAfterPromotionDiscount, answerToApplyMembership);
 
         // 영수증 출력
         OutputView.printFinalReceipt(receipts, promotionDiscount, membershipDiscount);
@@ -65,14 +65,14 @@ public class StoreController {
         return InputView.buyAnotherProduct();
     }
 
-    private static List<Receipt> getReceipts(ProductService productService, List<Product> inventory,
+    private static List<Receipt> getReceipts(StoreService storeService, List<Product> inventory,
                                              List<Promotion> promotions) {
         List<Receipt> receipts = new ArrayList<>();
         while (receipts.isEmpty()) {
             try {
                 Map<String, Long> productsToBuy = InputView.askPurchaseProduct();
                 productsToBuy.forEach((name, quantity) -> {
-                    Receipt receipt = productService.buy(name, quantity, inventory, promotions);
+                    Receipt receipt = storeService.buy(name, quantity, inventory, promotions);
                     receipts.add(receipt);
                 });
             } catch (IllegalArgumentException e) {

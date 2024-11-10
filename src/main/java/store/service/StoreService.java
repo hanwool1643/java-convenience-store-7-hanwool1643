@@ -12,7 +12,7 @@ import store.domain.Promotion;
 import store.domain.Receipt;
 import store.view.InputView;
 
-public class ProductService {
+public class StoreService {
     public Receipt buy(String name, Long quantity, List<Product> inventory, List<Promotion> promotions) {
         List<Product> products = findProductByName(name, inventory);
 
