@@ -57,6 +57,6 @@ public class InputView {
 
     public static String buyAnotherProduct() {
         System.out.println(MessageConstants.EXIT_MESSAGE);
-        return Console.readLine();
+        return getYesOrNoAnswer();
     }
 }
