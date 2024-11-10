@@ -1,5 +1,8 @@
 package store.view;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import store.common.constants.StringConstants;
 
@@ -14,6 +17,16 @@ public class InputParser {
                 giveBlankToEnd(parseQuantity(quantity)),
                 parsePromotion(promotion)
         ).toString();
+    }
+
+    public static Map<String, Long> purchaseInputParser(String[] inputArray) {
+        Map<String, Long> purchaseDetail = new HashMap<>();
+        Arrays.stream(inputArray).forEach(input -> {
+            String bracketsRemoved = input.replace("[", "").replace("]", "");
+            String[] inputSplit = bracketsRemoved.split(StringConstants.DASH);
+            purchaseDetail.put(inputSplit[0], Long.parseLong(inputSplit[1]));
+        });
+        return purchaseDetail;
     }
 
     private static String giveBlankToEnd(String name) {
