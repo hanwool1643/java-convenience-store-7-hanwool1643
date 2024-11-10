@@ -21,6 +21,7 @@ public class OutputView {
             );
             System.out.println(convertedProductInfo);
         }
+        System.out.println();
     }
     //TODO: 리팩토링 필요
     public static void printFinalReceipt(List<Receipt> receipts, Long promotionDiscount, Long membershipDiscount) {
@@ -52,5 +53,6 @@ public class OutputView {
         System.out.println("멤버십할인    "+ "-"+ InputParser.giveCommaToPrice(membershipDiscount.toString().split("")));
         long totalPriceToPay = sumOfTotalPrice - promotionDiscount - membershipDiscount;
         System.out.println("내실돈          " + InputParser.giveCommaToPrice(Long.toString(totalPriceToPay).split("")) );
+        System.out.println();
     }
 }
