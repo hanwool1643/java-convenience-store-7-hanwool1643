@@ -18,4 +18,7 @@ public class NumberConstants {
     public static final long NO_MEMBERSHIP_DISCOUNT = 0L;
     public static final double MEMBERSHIP_DISCOUNT_RATIO = 0.3;
 
+    public static final int RECEIPT_THREE_SECTION_WIDTH = 12;
+    public static final int RECEIPT_TWO_SECTION_WIDTH = 24;
+
 }
