@@ -14,4 +14,5 @@ public class StringConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String NO = "N";
     public static final String YES = "Y";
+    public static final String NULL = "null";
 }
