@@ -29,4 +29,5 @@ public class StringConstants {
 
 
     public static final String PURCHASE_INPUT_FORMAT = "\\[[^\\[\\]-]+\\-\\d+\\]";
+    public static final String EMPTY = "";
 }

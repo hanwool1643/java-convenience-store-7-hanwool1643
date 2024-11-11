@@ -1,6 +1,9 @@
 package store.view;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import store.common.constants.MessageConstants;
 import store.common.constants.NumberConstants;
 import store.common.constants.StringConstants;
@@ -14,16 +17,50 @@ public class OutputView {
     }
 
     public static void printInventoryDetail(List<Product> inventory) {
+        printInventoryHeader();
+        printInventoryProducts(inventory);
+        printGroupedProducts(inventory);
+        printLineBreak();
+    }
+
+    private static void printInventoryHeader() {
         System.out.println(MessageConstants.INVENTORY_STATUS_MESSAGE);
         printLineBreak();
+    }
+
+    private static void printInventoryProducts(List<Product> inventory) {
         for (Product product : inventory) {
-            String convertedProductInfo = InputParser.inventoryParser(
-                    product.getName(), product.getPrice(),
-                    product.getQuantity(), product.getPromotion()
-            );
-            System.out.println(convertedProductInfo);
+            printProductInfo(product.getName(), product.getPrice(), product.getQuantity(), product.getPromotion());
         }
-        printLineBreak();
+    }
+
+    private static void printGroupedProducts(List<Product> inventory) {
+        Map<String, List<Product>> productGroup = inventory.stream()
+                .collect(Collectors.groupingBy(Product::getName));
+
+        productGroup.forEach((name, products) -> {
+            if (products.size() > 1) {
+                printMultipleProducts(products);
+            } else {
+                printSingleProductWithOutOfStock(products.get(0));
+            }
+        });
+    }
+
+    private static void printMultipleProducts(List<Product> products) {
+        for (Product product : products) {
+            printProductInfo(product.getName(), product.getPrice(), product.getQuantity(), product.getPromotion());
+        }
+    }
+
+    private static void printSingleProductWithOutOfStock(Product product) {
+        printProductInfo(product.getName(), product.getPrice(), product.getQuantity(), product.getPromotion());
+        printProductInfo(product.getName(), product.getPrice(), 0L, StringConstants.EMPTY);
+    }
+
+    private static void printProductInfo(String name, long price, long quantity, String promotion) {
+        String convertedProductInfo = InputParser.inventoryParser(name, price, quantity, promotion);
+        System.out.println(convertedProductInfo);
     }
 
     public static void printFinalReceipt(List<Receipt> receipts, Long promotionDiscount, Long membershipDiscount) {
@@ -52,7 +89,8 @@ public class OutputView {
         for (Receipt receipt : receipts) {
             String priceWithComma = InputParser.giveCommaToPrice(receipt.getTotalPrice().toString().split(""))
                     .toString();
-            locateTreeSectionReceipt(List.of(receipt.getProductName(), receipt.getTotalQuantity().toString(), priceWithComma));
+            locateTreeSectionReceipt(
+                    List.of(receipt.getProductName(), receipt.getTotalQuantity().toString(), priceWithComma));
             sumOfTotalPrice += receipt.getTotalPrice();
         }
         return sumOfTotalPrice;
@@ -78,11 +116,11 @@ public class OutputView {
     }
 
     private static void locateTwoSectionReceipt(List<String> strings) {
-            for (String string : strings) {
-                System.out.print(string);
-                System.out.print(
-                        StringConstants.BLANK.repeat(NumberConstants.RECEIPT_TWO_SECTION_WIDTH - string.length()));
-            }
+        for (String string : strings) {
+            System.out.print(string);
+            System.out.print(
+                    StringConstants.BLANK.repeat(NumberConstants.RECEIPT_TWO_SECTION_WIDTH - string.length()));
+        }
         printLineBreak();
     }
 
