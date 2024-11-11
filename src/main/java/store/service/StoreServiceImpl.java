@@ -23,9 +23,7 @@ public class StoreServiceImpl implements StoreService {
 
         if (promotionProduct != null) {
             Promotion promotion = findApplicablePromotion(promotionProduct, promotions);
-            boolean isPromotionPeriod = promotion.checkPromotionPeriod(DateTimes.now().toLocalDate());
-
-            if (isPromotionPeriod) {
+            if (promotion.checkPromotionPeriod(DateTimes.now().toLocalDate())) {
                 return handlePromotionPurchase(promotionProduct, nonPromotionProduct, promotion, quantity);
             }
         }
@@ -120,7 +118,7 @@ public class StoreServiceImpl implements StoreService {
                                        Promotion promotion) {
         if (quantity % promotion.getBuy() == 0) {
             String answer = InputView.tellFreeProductProvide(promotionProduct.getName(), freeQuantity);
-            Receipt productReceipt = buyProductWithPromotionOrNot(promotionProduct, quantity, freeQuantity, answer);
+            Receipt productReceipt = getProductFreeOrNot(promotionProduct, quantity, freeQuantity, answer);
             if (productReceipt != null) {
                 return productReceipt;
             }
@@ -131,7 +129,8 @@ public class StoreServiceImpl implements StoreService {
     }
 
     // 프로모션 할인 구매 적용에 따른 구매 처리
-    private static Receipt buyProductWithPromotionOrNot(Product promotionProduct, Long quantity, Long freeQuantity, String answer) {
+    @Override
+    public Receipt getProductFreeOrNot(Product promotionProduct, Long quantity, Long freeQuantity, String answer) {
         if (StringConstants.YES.equals(answer)) {
             promotionProduct.buy(quantity + freeQuantity);
             return new Receipt(promotionProduct.getName(), quantity + freeQuantity, freeQuantity,
@@ -141,7 +140,7 @@ public class StoreServiceImpl implements StoreService {
             promotionProduct.buy(quantity);
             return new Receipt(promotionProduct.getName(), quantity, 0L, promotionProduct.getPrice());
         }
-        return null;
+        throw new IllegalArgumentException(ErrorConstants.INPUT_FORMAT_ERROR_MESSAGE);
     }
 
     // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 작을 때
@@ -150,15 +149,16 @@ public class StoreServiceImpl implements StoreService {
         Long promotionNotAppliedQuantity = promotionProductQuantity % (promotion.getBuy() + promotion.getGet());
         String answer = InputView.tellPromotionNotApplicable(promotionProduct.getName(), promotionNotAppliedQuantity);
 
-        return buyProductByAnswer(promotionProduct, nonPromotionProduct, promotionProductQuantity, quantity,
+        return buyInSufficientPromotionStockOrNot(promotionProduct, nonPromotionProduct, quantity,
                 freeQuantity,
                 answer, promotionNotAppliedQuantity);
     }
 
     // 프로모션 재고 부족 시 부족분 정가 구매 혹은 미구매 처리
-    private static Receipt buyProductByAnswer(Product promotionProduct, Product nonPromotionProduct, Long promotionProductQuantity,
-                                              Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity) {
-        Receipt allProductReceipt = answerYes(promotionProduct, nonPromotionProduct, promotionProductQuantity,
+    @Override
+    public Receipt buyInSufficientPromotionStockOrNot(Product promotionProduct, Product nonPromotionProduct,
+                                                              Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity) {
+        Receipt allProductReceipt = answerYes(promotionProduct, nonPromotionProduct, promotionProduct.getQuantity(),
                 quantity, freeQuantity, answer, promotionNotAppliedQuantity);
         if (allProductReceipt != null) return allProductReceipt;
 

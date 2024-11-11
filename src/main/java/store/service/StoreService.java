@@ -11,4 +11,9 @@ public interface StoreService {
     Long[] calculateTotalReceipts(List<Receipt> receipts);
 
     Long calculateMembershipDiscount(Long price, String answer);
+
+    Receipt getProductFreeOrNot(Product promotionProduct, Long quantity, Long freeQuantity, String answer);
+
+    Receipt buyInSufficientPromotionStockOrNot(Product promotionProduct, Product nonPromotionProduct,
+                                               Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity);
 }
