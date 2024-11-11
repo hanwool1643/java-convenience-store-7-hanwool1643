@@ -6,7 +6,7 @@ import store.domain.Product;
 import store.domain.Promotion;
 
 public interface FileService {
-    List<Product> extractProductByFile(Scanner productsFile);
+    List<Product> extractProduct(Scanner productsFile);
 
-    List<Promotion> extractPromotionByFile(Scanner promotionsFile);
+    List<Promotion> extractPromotion(Scanner promotionsFile);
 }

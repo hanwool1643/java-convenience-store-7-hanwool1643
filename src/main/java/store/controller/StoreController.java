@@ -11,9 +11,7 @@ import store.domain.Product;
 import store.domain.Promotion;
 import store.domain.Receipt;
 import store.service.FileService;
-import store.service.FileServiceImpl;
 import store.service.StoreService;
-import store.service.StoreServiceImpl;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -38,12 +36,12 @@ public class StoreController {
 
     private static List<Promotion> extractPromotions(FileService fileServiceImpl) {
         Scanner promotionFile = FileReader.readFile(AddressConstants.promotionFilePath);
-        return fileServiceImpl.extractPromotionByFile(promotionFile);
+        return fileServiceImpl.extractPromotion(promotionFile);
     }
 
     private static List<Product> extractProducts(FileService fileServiceImpl) {
         Scanner productsFile = FileReader.readFile(AddressConstants.productFilePath);
-        return fileServiceImpl.extractProductByFile(productsFile);
+        return fileServiceImpl.extractProduct(productsFile);
     }
 
     private static String processPurchase(List<Product> inventory, StoreService storeService, List<Promotion> promotions) {
