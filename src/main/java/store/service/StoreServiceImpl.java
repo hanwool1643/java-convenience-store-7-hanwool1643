@@ -23,7 +23,7 @@ public class StoreServiceImpl implements StoreService {
 
         if (promotionProduct != null) {
             Promotion promotion = findApplicablePromotion(promotionProduct, promotions);
-            boolean isPromotionPeriod = promotion.calculateOnPromotion(DateTimes.now().toLocalDate());
+            boolean isPromotionPeriod = promotion.checkPromotionPeriod(DateTimes.now().toLocalDate());
 
             if (isPromotionPeriod) {
                 return handlePromotionPurchase(promotionProduct, nonPromotionProduct, promotion, quantity);

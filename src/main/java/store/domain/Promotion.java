@@ -43,7 +43,7 @@ public class Promotion {
         return get;
     }
 
-    public boolean calculateOnPromotion(LocalDate now) {
+    public boolean checkPromotionPeriod(LocalDate now) {
         return (now.isEqual(startDate) || now.isAfter(startDate)) &&
                 (now.isEqual(endDate) || now.isBefore(endDate));
 
