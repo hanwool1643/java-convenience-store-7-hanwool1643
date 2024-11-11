@@ -60,7 +60,7 @@ public class StoreController {
 
     private static Long calculateMembershipDiscount(StoreService storeService, Long priceAfterPromotionDiscount) {
         String answerToApplyMembership = InputView.askMembershipDiscount();
-        return storeService.applyMembershipOrNot(priceAfterPromotionDiscount, answerToApplyMembership);
+        return storeService.calculateMembershipDiscount(priceAfterPromotionDiscount, answerToApplyMembership);
     }
 
     private static List<Receipt> buyProducts(StoreService storeService, List<Product> inventory,

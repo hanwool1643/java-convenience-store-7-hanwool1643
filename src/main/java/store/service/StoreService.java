@@ -10,5 +10,5 @@ public interface StoreService {
 
     Long[] calculateTotalReceipts(List<Receipt> receipts);
 
-    Long applyMembershipOrNot(Long price, String answer);
+    Long calculateMembershipDiscount(Long price, String answer);
 }

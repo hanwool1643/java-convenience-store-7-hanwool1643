@@ -44,7 +44,7 @@ public class StoreServiceImpl implements StoreService {
         return new Long[] {totalPrice, discountPrice};
     }
     @Override
-    public Long applyMembershipOrNot(Long price, String answer) {
+    public Long calculateMembershipDiscount(Long price, String answer) {
         if (StringConstants.YES.equals(answer)) {
             double membershipDiscountPrice = price * NumberConstants.MEMBERSHIP_DISCOUNT_RATIO;
             if (membershipDiscountPrice > NumberConstants.MAX_MEMBERSHIP_DISCOUNT) {
