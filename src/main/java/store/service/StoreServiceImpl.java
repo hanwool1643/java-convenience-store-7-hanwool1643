@@ -148,10 +148,9 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity, Promotion promotion) {
-        long applicablePromotionSets = promotionProductQuantity / (promotion.getBuy() + promotion.getGet());
-        long applicableQuantity = applicablePromotionSets * promotion.getBuy();
-        return quantity - applicableQuantity;
+    public long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity,
+                                                     Promotion promotion) {
+        return quantity - (promotionProductQuantity / promotion.getBuy() * (promotion.getGet() + promotion.getBuy()));
     }
 
     @Override
