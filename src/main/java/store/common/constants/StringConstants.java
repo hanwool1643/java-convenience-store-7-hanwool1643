@@ -28,4 +28,5 @@ public class StringConstants {
     public static final String MONEY_TO_PAY = "내실돈";
 
 
+    public static final String PURCHASE_INPUT_FORMAT = "\\[[^\\[\\]-]+\\-\\d+\\]";
 }
