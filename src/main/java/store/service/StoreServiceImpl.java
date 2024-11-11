@@ -99,7 +99,7 @@ public class StoreServiceImpl implements StoreService {
         Long freeQuantity = calculateFreeQuantity(quantity, promotion);
 
         if (promotionProductQuantity >= quantity + freeQuantity) {
-            return applyFullPromotion(promotionProduct, quantity, freeQuantity);
+            return applyFullPromotion(promotionProduct, quantity, freeQuantity, promotion);
         }
         if (promotionProductQuantity < quantity + freeQuantity) {
             return handleInsufficientPromotionStock(promotionProduct, nonPromotionProduct,
@@ -114,9 +114,18 @@ public class StoreServiceImpl implements StoreService {
     }
 
     // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 클 때
-    private Receipt applyFullPromotion(Product promotionProduct, Long quantity, Long freeQuantity) {
-        String answer = InputView.tellFreeProductProvide(promotionProduct.getName(), freeQuantity);
-        return getProductFreeOrNot(promotionProduct, quantity, freeQuantity, answer);
+    private Receipt applyFullPromotion(Product promotionProduct, Long quantity, Long freeQuantity,
+                                       Promotion promotion) {
+        if (quantity % promotion.getBuy() == 0) {
+            String answer = InputView.tellFreeProductProvide(promotionProduct.getName(), freeQuantity);
+            Receipt productReceipt = getProductFreeOrNot(promotionProduct, quantity, freeQuantity, answer);
+            if (productReceipt != null) {
+                return productReceipt;
+            }
+        }
+        promotionProduct.buy(quantity + freeQuantity);
+        return new Receipt(promotionProduct.getName(), quantity + freeQuantity, freeQuantity,
+                promotionProduct.getPrice());
     }
 
     // 프로모션 할인 구매 적용에 따른 구매 처리
@@ -134,12 +143,10 @@ public class StoreServiceImpl implements StoreService {
         throw new IllegalArgumentException(ErrorConstants.INPUT_FORMAT_ERROR_MESSAGE);
     }
 
-    // 프로모션의 전체 수량이 구매 수량과 무료 수량의 합보다 작을 때
+    // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 작을 때
     private Receipt handleInsufficientPromotionStock(Product promotionProduct, Product nonPromotionProduct,
-                                                     Long promotionProductQuantity, Promotion promotion,
-                                                     Long quantity) {
-        Long promotionNotAppliedQuantity = calculatePromotionNotAppliedQuantity(quantity, promotionProductQuantity,
-                promotion);
+                                                     Long promotionProductQuantity, Promotion promotion, Long quantity) {
+        Long promotionNotAppliedQuantity = calculatePromotionNotAppliedQuantity(quantity, promotionProductQuantity, promotion);
         Long actualFreeQuantity = calculateActualFreeQuantity(promotionProductQuantity, promotion);
         String answer = InputView.tellPromotionNotApplicable(promotionProduct.getName(), promotionNotAppliedQuantity);
 
@@ -148,8 +155,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity,
-                                                     Promotion promotion) {
+    public long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity, Promotion promotion) {
         return quantity - (promotionProductQuantity / promotion.getBuy() * (promotion.getGet() + promotion.getBuy()));
     }
 
