@@ -32,6 +32,7 @@ public class StoreServiceImpl implements StoreService {
 
         return handleNonPromotionPurchase(nonPromotionProduct, quantity);
     }
+
     @Override
     public Long [] calculateTotalReceipts(List<Receipt> receipts) {
         Long totalPrice = 0L;
@@ -43,6 +44,7 @@ public class StoreServiceImpl implements StoreService {
         }
         return new Long[] {totalPrice, discountPrice};
     }
+
     @Override
     public Long calculateMembershipDiscount(Long price, String answer) {
         if (StringConstants.YES.equals(answer)) {
