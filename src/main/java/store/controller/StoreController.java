@@ -23,13 +23,9 @@ public class StoreController {
     public void open() {
         FileService fileService = new FileService();
         StoreService storeService = new StoreService();
-        // 제품 추출
-        Scanner productsFile = FileReader.readFile(AddressConstants.productFilePath);
-        List<Product> inventory = fileService.extractProductByFile(productsFile);
 
-        //프로모션 추출
-        Scanner promotionFile = FileReader.readFile(AddressConstants.promotionFilePath);
-        List<Promotion> promotions = fileService.extractPromotionByFile(promotionFile);
+        List<Product> inventory = extractProducts(fileService); // 제품 추출
+        List<Promotion> promotions = extractPromotions(fileService); //프로모션 추출
 
         String answerToContinue = proceedToBuy(inventory, storeService, promotions);
 
@@ -38,34 +34,36 @@ public class StoreController {
         }
     }
 
-    private static String proceedToBuy(List<Product> inventory, StoreService storeService,
-                                    List<Promotion> promotions) {
-        // 환영 인사
-        OutputView.printWelcome();
-        // 재고 확인
-        OutputView.printInventoryDetail(inventory);
-
-        // 구매
-        List<Receipt> receipts = getReceipts(storeService, inventory, promotions);
-
-        // 총 영수증 계산
-        Long[] totalReceipts = storeService.calculateTotalReceipts(receipts);
-        Long totalPrice = totalReceipts[0];
-        Long promotionDiscount = totalReceipts[1];
-        Long priceAfterPromotionDiscount = totalPrice - promotionDiscount;
-
-        // 멤버십 할인 적용
-        String answerToApplyMembership = InputView.askMembershipDiscount();
-        Long membershipDiscount = storeService.applyMembershipOrNot(priceAfterPromotionDiscount, answerToApplyMembership);
-
-        // 영수증 출력
-        OutputView.printFinalReceipt(receipts, promotionDiscount, membershipDiscount);
-
-        // 물건 반복 구매 문의
-        return InputView.buyAnotherProduct();
+    private static List<Promotion> extractPromotions(FileService fileService) {
+        Scanner promotionFile = FileReader.readFile(AddressConstants.promotionFilePath);
+        return fileService.extractPromotionByFile(promotionFile);
     }
 
-    private static List<Receipt> getReceipts(StoreService storeService, List<Product> inventory,
+    private static List<Product> extractProducts(FileService fileService) {
+        Scanner productsFile = FileReader.readFile(AddressConstants.productFilePath);
+        return fileService.extractProductByFile(productsFile);
+    }
+
+    private static String proceedToBuy(List<Product> inventory, StoreService storeService, List<Promotion> promotions) {
+        OutputView.printWelcome(); // 환영 인사
+        OutputView.printInventoryDetail(inventory); // 재고 확인
+
+        List<Receipt> receipts = buyProducts(storeService, inventory, promotions); // 구매
+        Long[] totalReceipts = storeService.calculateTotalReceipts(receipts); // totalReceipts[0]: 총구매 금액, totalReceipts[1]: 총할인 금액
+        Long priceAfterPromotionDiscount = totalReceipts[0] - totalReceipts[1];
+        Long membershipDiscount = calculateMembershipDiscount(storeService, priceAfterPromotionDiscount); // 멤버십 할인 적용
+
+        OutputView.printFinalReceipt(receipts, totalReceipts[1], membershipDiscount); // 영수증 출력
+
+        return InputView.buyAnotherProduct(); // 물건 반복 구매 문의
+    }
+
+    private static Long calculateMembershipDiscount(StoreService storeService, Long priceAfterPromotionDiscount) {
+        String answerToApplyMembership = InputView.askMembershipDiscount();
+        return storeService.applyMembershipOrNot(priceAfterPromotionDiscount, answerToApplyMembership);
+    }
+
+    private static List<Receipt> buyProducts(StoreService storeService, List<Product> inventory,
                                              List<Promotion> promotions) {
         List<Receipt> receipts = new ArrayList<>();
         while (receipts.isEmpty()) {
