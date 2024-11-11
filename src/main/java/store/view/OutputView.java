@@ -2,6 +2,8 @@ package store.view;
 
 import java.util.List;
 import store.common.constants.MessageConstants;
+import store.common.constants.NumberConstants;
+import store.common.constants.StringConstants;
 import store.domain.Product;
 import store.domain.Receipt;
 import store.view.utils.InputParser;
@@ -15,45 +17,84 @@ public class OutputView {
         System.out.println(MessageConstants.INVENTORY_STATUS_MESSAGE);
         for (Product product : inventory) {
             String convertedProductInfo = InputParser.inventoryParser(
-                    product.getName(),
-                    product.getPrice(),
-                    product.getQuantity(),
-                    product.getPromotion()
+                    product.getName(), product.getPrice(),
+                    product.getQuantity(), product.getPromotion()
             );
             System.out.println(convertedProductInfo);
         }
-        System.out.println();
+        printLineBreak();
     }
-    //TODO: 리팩토링 필요
+
     public static void printFinalReceipt(List<Receipt> receipts, Long promotionDiscount, Long membershipDiscount) {
+        System.out.println(StringConstants.RECEIPT_HEADER);
+        Long sumOfTotalPrice = printPurchaseSummary(receipts);
+        printPromotionSummary(receipts);
+        printFinalSummary(promotionDiscount, membershipDiscount, sumOfTotalPrice);
+        printLineBreak();
+    }
+
+    private static void printFinalSummary(Long promotionDiscount, Long membershipDiscount, Long sumOfTotalPrice) {
+        System.out.println(StringConstants.SUMMARY_SEPARATOR);
+        locateTwoSectionReceipt(List.of(StringConstants.TOTAL_PRICE_AMOUNT, InputParser.giveCommaToPrice(
+                sumOfTotalPrice.toString().split("")).toString()));
+        locateTwoSectionReceipt(List.of(StringConstants.PROMOTION_DISCOUNT, giveMinusToNumber(promotionDiscount)));
+        locateTwoSectionReceipt(List.of(StringConstants.MEMBERSHIP_DISCOUNT, giveMinusToNumber(membershipDiscount)));
+
+        long totalPriceToPay = sumOfTotalPrice - promotionDiscount - membershipDiscount;
+        locateTwoSectionReceipt(List.of(StringConstants.MONEY_TO_PAY, InputParser.giveCommaToPrice(
+                Long.toString(totalPriceToPay).split("")).toString()));
+    }
+
+    private static Long printPurchaseSummary(List<Receipt> receipts) {
+        printPurchaseHeader();
         Long sumOfTotalPrice = 0L;
-        System.out.println("===============W 편의점===============");
-        System.out.println("상품명             수량              금액");
         for (Receipt receipt : receipts) {
-            int productNameLength = receipt.getProductName().length();
-            int productQuantityLength = receipt.getTotalQuantity().toString().length();
-            System.out.print(receipt.getProductName());
-            System.out.print(" ".repeat(13 - productNameLength));
-            System.out.print(receipt.getTotalQuantity());
-            System.out.print(" ".repeat(14 - productQuantityLength));
-            System.out.println(InputParser.giveCommaToPrice(receipt.getTotalPrice().toString().split("")));
+            String priceWithComma = InputParser.giveCommaToPrice(receipt.getTotalPrice().toString().split(""))
+                    .toString();
+            locateTreeSectionReceipt(List.of(receipt.getProductName(), receipt.getTotalQuantity().toString(), priceWithComma));
             sumOfTotalPrice += receipt.getTotalPrice();
         }
-        System.out.println("===============증  정================");
+        return sumOfTotalPrice;
+    }
+
+    private static void printPromotionSummary(List<Receipt> receipts) {
+        System.out.println(StringConstants.PROMOTION_SECTION_HEADER);
         List<Receipt> discountReceipts = receipts.stream().filter(receipt -> receipt.getDiscountPrice() > 0).toList();
         for (Receipt receipt : discountReceipts) {
-            int productNameLength = receipt.getProductName().length();
-            System.out.print(receipt.getDiscountPrice());
-            System.out.print(" ".repeat(13 - productNameLength));
-            System.out.println(receipt.getDiscountQuantity());
+            locateTreeSectionReceipt(List.of(receipt.getProductName(), receipt.getDiscountQuantity().toString()));
         }
-        System.out.println("====================================");
-        System.out.println("총구매액          " + InputParser.giveCommaToPrice(
-                sumOfTotalPrice.toString().split("")));
-        System.out.println("행사할인                 " + "-" + InputParser.giveCommaToPrice(promotionDiscount.toString().split("")));
-        System.out.println("멤버십할인    "+ "-"+ InputParser.giveCommaToPrice(membershipDiscount.toString().split("")));
-        long totalPriceToPay = sumOfTotalPrice - promotionDiscount - membershipDiscount;
-        System.out.println("내실돈          " + InputParser.giveCommaToPrice(Long.toString(totalPriceToPay).split("")) );
+    }
+
+    private static String giveMinusToNumber(Long number) {
+        return "-" + InputParser.giveCommaToPrice(number.toString().split(""));
+    }
+
+    private static void printPurchaseHeader() {
+        String nameConstant = StringConstants.RECEIPT_PRODUCT_NAME;
+        String quantityConstant = StringConstants.RECEIPT_PRODUCT_QUANTITY;
+        String priceConstant = StringConstants.RECEIPT_PRODUCT_PRICE;
+        locateTreeSectionReceipt(List.of(nameConstant, quantityConstant, priceConstant));
+    }
+
+    private static void locateTwoSectionReceipt(List<String> strings) {
+            for (String string : strings) {
+                System.out.print(string);
+                System.out.print(
+                        StringConstants.BLANK.repeat(NumberConstants.RECEIPT_TWO_SECTION_WIDTH - string.length()));
+            }
+        printLineBreak();
+    }
+
+    private static void locateTreeSectionReceipt(List<String> strings) {
+        for (String string : strings) {
+            System.out.print(string);
+            System.out.print(
+                    StringConstants.BLANK.repeat(NumberConstants.RECEIPT_THREE_SECTION_WIDTH - string.length()));
+        }
+        printLineBreak();
+    }
+
+    private static void printLineBreak() {
         System.out.println();
     }
 }
