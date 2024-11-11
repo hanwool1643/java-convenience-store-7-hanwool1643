@@ -12,7 +12,8 @@ import store.domain.Promotion;
 import store.domain.Receipt;
 import store.view.InputView;
 
-public class StoreServiceImpl {
+public class StoreServiceImpl implements StoreService {
+    @Override
     public Receipt buy(String name, Long quantity, List<Product> inventory, List<Promotion> promotions) {
         List<Product> products = findProductByName(name, inventory);
 
@@ -31,7 +32,7 @@ public class StoreServiceImpl {
 
         return handleNonPromotionPurchase(nonPromotionProduct, quantity);
     }
-
+    @Override
     public Long [] calculateTotalReceipts(List<Receipt> receipts) {
         Long totalPrice = 0L;
         Long discountPrice = 0L;
@@ -42,7 +43,7 @@ public class StoreServiceImpl {
         }
         return new Long[] {totalPrice, discountPrice};
     }
-
+    @Override
     public Long applyMembershipOrNot(Long price, String answer) {
         if (StringConstants.YES.equals(answer)) {
             double membershipDiscountPrice = price * NumberConstants.MEMBERSHIP_DISCOUNT_RATIO;
