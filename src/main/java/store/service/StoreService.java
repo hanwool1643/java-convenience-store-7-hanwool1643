@@ -16,4 +16,8 @@ public interface StoreService {
 
     Receipt buyInSufficientPromotionStockOrNot(Product promotionProduct, Product nonPromotionProduct,
                                                Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity);
+
+    long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity, Promotion promotion);
+
+    long calculateActualFreeQuantity(Long promotionProductQuantity, Promotion promotion);
 }
