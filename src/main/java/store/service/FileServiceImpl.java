@@ -8,8 +8,8 @@ import store.common.constants.StringConstants;
 import store.domain.Product;
 import store.domain.Promotion;
 
-public class FileServiceImpl {
-
+public class FileServiceImpl implements FileService {
+    @Override
     public List<Product> extractProductByFile(Scanner productsFile) {
         List<Product> inventory = productsFile.tokens()
                 // 첫 번째 header row 필터
@@ -20,7 +20,7 @@ public class FileServiceImpl {
 
         return inventory;
     }
-
+    @Override
     public List<Promotion> extractPromotionByFile(Scanner promotionsFile) {
         List<Promotion> promotions = promotionsFile.tokens()
                 // 첫 번째 header row 필터
