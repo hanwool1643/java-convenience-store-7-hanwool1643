@@ -32,7 +32,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Long [] calculateTotalReceipts(List<Receipt> receipts) {
+    public Long[] calculateTotalReceipts(List<Receipt> receipts) {
         Long totalPrice = 0L;
         Long discountPrice = 0L;
 
@@ -40,7 +40,7 @@ public class StoreServiceImpl implements StoreService {
             totalPrice += receipt.getTotalPrice();
             discountPrice += receipt.getDiscountPrice();
         }
-        return new Long[] {totalPrice, discountPrice};
+        return new Long[]{totalPrice, discountPrice};
     }
 
     @Override
@@ -144,27 +144,44 @@ public class StoreServiceImpl implements StoreService {
     }
 
     // 프로모션이 전체 수량이 구매 수량과 무료 수량의 합보다 작을 때
-    private Receipt handleInsufficientPromotionStock(Product promotionProduct, Product nonPromotionProduct, Long promotionProductQuantity,
+    private Receipt handleInsufficientPromotionStock(Product promotionProduct, Product nonPromotionProduct,
+                                                     Long promotionProductQuantity,
                                                      Promotion promotion, Long quantity, Long freeQuantity) {
-        Long promotionNotAppliedQuantity = promotionProductQuantity % (promotion.getBuy() + promotion.getGet());
+        // 정가로 사야하는 수량 = promotionNotAppliedQuantity
+        Long promotionNotAppliedQuantity = calculatePromotionNotAppliedQuantity(quantity, promotionProductQuantity, promotion);
+        Long actualFreeQuantity = calculateActualFreeQuantity(promotionProductQuantity, promotion);
         String answer = InputView.tellPromotionNotApplicable(promotionProduct.getName(), promotionNotAppliedQuantity);
 
         return buyInSufficientPromotionStockOrNot(promotionProduct, nonPromotionProduct, quantity,
-                freeQuantity,
-                answer, promotionNotAppliedQuantity);
+                actualFreeQuantity, answer, promotionNotAppliedQuantity);
+    }
+
+    @Override
+    public long calculatePromotionNotAppliedQuantity(Long quantity, Long promotionProductQuantity, Promotion promotion) {
+        return quantity - (promotionProductQuantity / promotion.getBuy() * (promotion.getGet() + promotion.getBuy()));
+    }
+
+    @Override
+    public long calculateActualFreeQuantity(Long promotionProductQuantity, Promotion promotion) {
+        return promotionProductQuantity / (promotion.getGet() + promotion.getBuy());
     }
 
     // 프로모션 재고 부족 시 부족분 정가 구매 혹은 미구매 처리
     @Override
     public Receipt buyInSufficientPromotionStockOrNot(Product promotionProduct, Product nonPromotionProduct,
-                                                              Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity) {
+                                                      Long quantity, Long freeQuantity, String answer,
+                                                      Long promotionNotAppliedQuantity) {
         Receipt allProductReceipt = answerYes(promotionProduct, nonPromotionProduct, promotionProduct.getQuantity(),
                 quantity, freeQuantity, answer, promotionNotAppliedQuantity);
-        if (allProductReceipt != null) return allProductReceipt;
+        if (allProductReceipt != null) {
+            return allProductReceipt;
+        }
 
         Receipt promotionProductReceipt = answerNo(promotionProduct, quantity, freeQuantity, answer,
                 promotionNotAppliedQuantity);
-        if (promotionProductReceipt != null) return promotionProductReceipt;
+        if (promotionProductReceipt != null) {
+            return promotionProductReceipt;
+        }
 
         throw new IllegalArgumentException(ErrorConstants.INPUT_FORMAT_ERROR_MESSAGE);
     }
@@ -182,13 +199,14 @@ public class StoreServiceImpl implements StoreService {
     }
 
     // 프로모션 재고 부족 시 부족분 정가 구매
-    private static Receipt answerYes(Product promotionProduct, Product nonPromotionProduct, Long promotionProductQuantity,
-                                     Long quantity, Long freeQuantity, String answer, Long promotionNotAppliedQuantity) {
+    private static Receipt answerYes(Product promotionProduct, Product nonPromotionProduct,
+                                     Long promotionProductQuantity,
+                                     Long quantity, Long freeQuantity, String answer,
+                                     Long promotionNotAppliedQuantity) {
         if (StringConstants.YES.equals(answer)) {
             promotionProduct.buy(promotionProductQuantity);
             nonPromotionProduct.buy(quantity - promotionProductQuantity);
-            return new Receipt(promotionProduct.getName(), quantity, freeQuantity - promotionNotAppliedQuantity,
-                    promotionProduct.getPrice());
+            return new Receipt(promotionProduct.getName(), quantity, freeQuantity, promotionProduct.getPrice());
         }
         return null;
     }
