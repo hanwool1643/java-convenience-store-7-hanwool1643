@@ -27,10 +27,9 @@ public class StoreController {
         List<Product> inventory = extractProducts(fileService); // 제품 추출
         List<Promotion> promotions = extractPromotions(fileService); //프로모션 추출
 
-        String answerToContinue = proceedToBuy(inventory, storeService, promotions);
-
-        while (answerToContinue.equals(StringConstants.YES)) {
-            answerToContinue = proceedToBuy(inventory, storeService, promotions);
+        while (true) {
+            String answerToContinue = processPurchase(inventory, storeService, promotions);
+            if (answerToContinue.equals(StringConstants.NO)) break;
         }
     }
 
@@ -44,7 +43,7 @@ public class StoreController {
         return fileService.extractProductByFile(productsFile);
     }
 
-    private static String proceedToBuy(List<Product> inventory, StoreService storeService, List<Promotion> promotions) {
+    private static String processPurchase(List<Product> inventory, StoreService storeService, List<Promotion> promotions) {
         OutputView.printWelcome(); // 환영 인사
         OutputView.printInventoryDetail(inventory); // 재고 확인
 
