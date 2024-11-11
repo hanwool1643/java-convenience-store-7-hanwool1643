@@ -15,6 +15,7 @@ public class OutputView {
 
     public static void printInventoryDetail(List<Product> inventory) {
         System.out.println(MessageConstants.INVENTORY_STATUS_MESSAGE);
+        printLineBreak();
         for (Product product : inventory) {
             String convertedProductInfo = InputParser.inventoryParser(
                     product.getName(), product.getPrice(),
